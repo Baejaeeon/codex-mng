@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>codex-mng dashboard</title>
+	<style>
+		:root {
+			--bg: #f6f1e8;
+			--ink: #1d2521;
+			--muted: #6e766f;
+			--panel: #fffaf1;
+			--line: #ded4c3;
+			--accent: #12664f;
+			--accent-soft: #d9eee6;
+			--warning: #a15c17;
+			--danger: #952323;
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		body {
+			margin: 0;
+			min-height: 100vh;
+			color: var(--ink);
+			font-family: Georgia, "Times New Roman", serif;
+			background:
+				radial-gradient(circle at 15% 20%, rgba(18, 102, 79, 0.14), transparent 32rem),
+				linear-gradient(135deg, #fbf7ef 0%, var(--bg) 52%, #e8efe8 100%);
+		}
+
+		main {
+			width: min(1080px, calc(100% - 32px));
+			margin: 0 auto;
+			padding: 52px 0;
+		}
+
+		h1 {
+			margin: 0 0 18px;
+			font-size: clamp(2.6rem, 8vw, 5.4rem);
+			line-height: 0.93;
+			letter-spacing: -0.06em;
+		}
+
+		.top-note {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: 12px;
+			margin-bottom: 16px;
+		}
+
+		.pill {
+			border-radius: 999px;
+			padding: 8px 12px;
+			font-family: "Trebuchet MS", Verdana, sans-serif;
+			font-size: 0.84rem;
+			font-weight: 700;
+		}
+
+		.pill-status {
+			color: var(--warning);
+			background: #fff1d8;
+		}
+
+		.pill-cache {
+			color: #194d3e;
+			background: #daf0e7;
+		}
+
+		.refresh-btn {
+			margin-left: auto;
+			border: 0;
+			border-radius: 999px;
+			padding: 10px 16px;
+			background: #114f3f;
+			color: #f7fff9;
+			font-family: "Trebuchet MS", Verdana, sans-serif;
+			font-size: 0.86rem;
+			font-weight: 700;
+			cursor: pointer;
+		}
+
+		.refresh-btn:disabled {
+			opacity: 0.55;
+			cursor: not-allowed;
+		}
+
+		.user-bar {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			margin-bottom: 22px;
+			padding: 10px 12px;
+			background: #eef4ff;
+			border: 1px solid #d9e6ff;
+			border-radius: 8px;
+			font-family: "Trebuchet MS", Verdana, sans-serif;
+		}
+
+		.user-pill {
+			font-size: 0.84rem;
+			color: #1e3a8a;
+			font-weight: 700;
+		}
+
+		.logout-btn {
+			margin-left: auto;
+			border: 0;
+			border-radius: 8px;
+			padding: 8px 12px;
+			background: #0f172a;
+			color: #fff;
+			font-size: 0.8rem;
+			cursor: pointer;
+		}
+
+		.panel {
+			overflow: hidden;
+			border: 1px solid var(--line);
+			border-radius: 28px;
+			background: rgba(255, 250, 241, 0.9);
+			box-shadow: 0 24px 60px rgba(49, 42, 31, 0.14);
+		}
+
+		.panel-header {
+			padding: 28px;
+			border-bottom: 1px solid var(--line);
+		}
+
+		.panel-header h2 {
+			margin: 0 0 8px;
+			font-size: clamp(1.7rem, 4vw, 2.8rem);
+			letter-spacing: -0.04em;
+		}
+
+		.panel-header p {
+			margin: 0;
+			color: var(--muted);
+			font-family: "Trebuchet MS", Verdana, sans-serif;
+			line-height: 1.62;
+		}
+
+		.metrics {
+			display: grid;
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			gap: 1px;
+			background: var(--line);
+		}
+
+		.card {
+			min-height: 208px;
+			padding: 24px;
+			background: var(--panel);
+		}
+
+		.card strong {
+			display: block;
+			margin-bottom: 14px;
+			color: var(--muted);
+			font-family: "Trebuchet MS", Verdana, sans-serif;
+			font-size: 0.86rem;
+			letter-spacing: 0.04em;
+			text-transform: uppercase;
+		}
+
+		.value {
+			margin: 0;
+			font-size: clamp(2rem, 5vw, 3.3rem);
+			font-weight: 700;
+			letter-spacing: -0.06em;
+		}
+
+		.desc {
+			margin-top: 8px;
+			color: var(--muted);
+			font-family: "Trebuchet MS", Verdana, sans-serif;
+			line-height: 1.52;
+		}
+
+		.progress-wrap {
+			margin-top: 14px;
+			border-radius: 999px;
+			background: #e7ddcc;
+			height: 12px;
+			overflow: hidden;
+		}
+
+		.progress-bar {
+			width: 0%;
+			height: 100%;
+			border-radius: inherit;
+			background: linear-gradient(90deg, var(--accent), #79b79e);
+			transition: width 0.45s ease;
+		}
+
+		.details {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 16px;
+			padding: 28px;
+		}
+
+		.detail {
+			padding: 18px;
+			border-radius: 18px;
+			background: var(--accent-soft);
+			font-family: "Trebuchet MS", Verdana, sans-serif;
+		}
+
+		.detail span {
+			display: block;
+			margin-bottom: 8px;
+			color: #34584b;
+			font-size: 0.8rem;
+			font-weight: 700;
+			letter-spacing: 0.04em;
+			text-transform: uppercase;
+		}
+
+		.detail p {
+			margin: 0;
+			line-height: 1.55;
+		}
+
+		.error {
+			display: none;
+			margin-top: 16px;
+			padding: 10px 12px;
+			border-radius: 10px;
+			font-family: "Trebuchet MS", Verdana, sans-serif;
+			background: #fbe9e9;
+			color: var(--danger);
+		}
+	</style>
+</head>
+<body>
+	<main>
+		<h1>codex-mng is running</h1>
+
+		<div class="top-note">
+			<span class="pill pill-status" id="dataSource">Loading</span>
+			<span class="pill pill-cache" id="cacheStatus">CACHE: -</span>
+			<button class="refresh-btn" id="refreshButton" type="button">Refresh Data</button>
+		</div>
+
+		<div class="user-bar">
+			<span class="user-pill" id="userEmail">user: -</span>
+			<span class="user-pill" id="scopeText">scope: -</span>
+			<span class="user-pill" id="mappingText">mapping: -</span>
+			<button class="logout-btn" id="logoutButton" type="button">Logout</button>
+		</div>
+
+		<section class="panel" aria-labelledby="usage-title">
+			<div class="panel-header">
+				<h2 id="usage-title">Codex Usage Dashboard</h2>
+				<p id="messageText">Loading usage information from backend API...</p>
+				<div class="error" id="errorText"></div>
+			</div>
+
+			<div class="metrics">
+				<article class="card">
+					<strong>Total Requests (Window)</strong>
+					<p class="value" id="totalRequests">-</p>
+					<p class="desc">From official Usage API completions buckets.</p>
+				</article>
+				<article class="card">
+					<strong>Total Input Tokens</strong>
+					<p class="value" id="totalInputTokens">-</p>
+					<div class="progress-wrap" aria-label="usage rate">
+						<div class="progress-bar" id="usageProgress"></div>
+					</div>
+					<p class="desc" id="usageValues">output tokens: -</p>
+				</article>
+				<article class="card">
+					<strong>Total Costs (USD)</strong>
+					<p class="value" id="totalCost">-</p>
+					<p class="desc">From official Costs API (`/organization/costs`).</p>
+				</article>
+			</div>
+
+			<div class="details">
+				<div class="detail">
+					<span>Last Updated</span>
+					<p id="lastUpdated">-</p>
+				</div>
+				<div class="detail">
+					<span>Query Window</span>
+					<p id="queryWindow">-</p>
+				</div>
+			</div>
+		</section>
+	</main>
+
+	<script>
+		const byId = (id) => document.getElementById(id);
+
+		function formatDate(value) {
+			if (!value) return "-";
+			const date = new Date(value);
+			if (Number.isNaN(date.getTime())) return value;
+			return date.toLocaleString();
+		}
+
+		function formatNumber(value) {
+			if (value === null || value === undefined) return "-";
+			return typeof value === "number" ? value.toLocaleString() : value;
+		}
+
+		function redirectToLogin() {
+			window.location.replace("/login.html");
+		}
+
+		function renderDashboard(data) {
+			byId("errorText").style.display = "none";
+			byId("errorText").textContent = "";
+			byId("dataSource").textContent = data.dataSource ?? "UNKNOWN";
+			byId("cacheStatus").textContent = data.cached ? "CACHE: HIT" : "CACHE: MISS";
+			byId("messageText").textContent = data.message ?? "No message";
+			byId("lastUpdated").textContent = formatDate(data.lastUpdatedAt);
+			byId("scopeText").textContent = `scope: ${data.scope ?? "-"}`;
+			byId("mappingText").textContent = `mapping: ${data.mappingStatus ?? "-"}`;
+
+			const usage = data.usageActivity ?? {};
+			const costs = data.costs ?? {};
+			const window = data.queryWindow ?? {};
+
+			byId("totalRequests").textContent = formatNumber(usage.totalRequests);
+			byId("totalInputTokens").textContent = formatNumber(usage.totalInputTokens);
+			byId("usageValues").textContent = `output tokens: ${formatNumber(usage.totalOutputTokens)}`;
+			byId("totalCost").textContent = costs.totalCostUsd === null || costs.totalCostUsd === undefined
+				? "-"
+				: `$${formatNumber(Number(costs.totalCostUsd))}`;
+			byId("queryWindow").textContent = `${formatDate(window.startedAt)} ~ ${formatDate(window.endsAt)}`;
+
+			const inputTokens = Number(usage.totalInputTokens ?? 0);
+			const outputTokens = Number(usage.totalOutputTokens ?? 0);
+			const totalTokens = inputTokens + outputTokens;
+			const outputRatio = totalTokens > 0 ? (outputTokens / totalTokens) * 100 : 0;
+			byId("usageProgress").style.width = `${Math.max(0, Math.min(100, outputRatio))}%`;
+		}
+
+		function renderError(message) {
+			const error = byId("errorText");
+			error.style.display = "block";
+			error.textContent = message;
+		}
+
+		function setLoading(isLoading) {
+			const button = byId("refreshButton");
+			button.disabled = isLoading;
+			button.textContent = isLoading ? "Refreshing..." : "Refresh Data";
+		}
+
+		async function loadCurrentUser() {
+			const response = await fetch("/api/me");
+			if (response.status === 401) {
+				redirectToLogin();
+				return;
+			}
+			if (!response.ok) {
+				throw new Error("Failed to load user profile.");
+			}
+			const user = await response.json();
+			byId("userEmail").textContent = `user: ${user.email ?? "-"}`;
+		}
+
+		async function loadDashboard(forceRefresh = false) {
+			setLoading(true);
+			try {
+				const endpoint = forceRefresh ? "/api/codex/dashboard/refresh" : "/api/codex/dashboard";
+				const method = forceRefresh ? "POST" : "GET";
+				const response = await fetch(endpoint, { method });
+				if (response.status === 401) {
+					redirectToLogin();
+					return;
+				}
+				if (!response.ok) {
+					const body = await response.json().catch(() => ({}));
+					throw new Error(body.message || `Request failed with ${response.status}`);
+				}
+				const data = await response.json();
+				renderDashboard(data);
+			} catch (error) {
+				renderError(`Failed to load dashboard: ${error.message}`);
+				byId("messageText").textContent = "Backend API is unreachable or returned an error.";
+			} finally {
+				setLoading(false);
+			}
+		}
+
+		byId("refreshButton").addEventListener("click", () => loadDashboard(true));
+		byId("logoutButton").addEventListener("click", () => {
+			window.location.href = "/logout";
+		});
+
+		(async () => {
+			try {
+				await loadCurrentUser();
+				await loadDashboard(false);
+			} catch (error) {
+				renderError(error.message);
+			}
+		})();
+	</script>
+</body>
+</html>

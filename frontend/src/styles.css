@@ -1,0 +1,115 @@
+:root {
+	font-family: "Pretendard", "Noto Sans KR", sans-serif;
+	color: #1f2a37;
+	background: radial-gradient(circle at top left, #f6f9ff 0%, #eef5ff 45%, #f9fbff 100%);
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	min-height: 100vh;
+}
+
+.page {
+	padding: 40px 16px;
+	display: flex;
+	justify-content: center;
+}
+
+.card {
+	width: min(1100px, 100%);
+	border-radius: 16px;
+	background: #ffffff;
+	box-shadow: 0 20px 40px rgba(42, 61, 97, 0.08);
+	padding: 28px;
+}
+
+.login-card {
+	width: min(480px, 100%);
+	text-align: center;
+}
+
+.header {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 16px;
+	margin-bottom: 20px;
+}
+
+.actions {
+	display: flex;
+	gap: 8px;
+}
+
+.grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: 12px;
+	margin-top: 12px;
+}
+
+.tile {
+	padding: 16px;
+	border: 1px solid #e5ecf8;
+	border-radius: 12px;
+	background: #fcfdff;
+}
+
+h1, h2 {
+	margin: 0;
+}
+
+h1 {
+	font-size: 2rem;
+}
+
+h2 {
+	font-size: 0.95rem;
+	color: #4f637f;
+}
+
+.big {
+	font-size: 1.8rem;
+	font-weight: 700;
+	margin: 8px 0 0;
+}
+
+.meta {
+	margin-top: 8px;
+	color: #3f536f;
+}
+
+button {
+	border: 0;
+	border-radius: 10px;
+	padding: 10px 14px;
+	background: #1560ff;
+	color: white;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+button.secondary {
+	background: #64748b;
+}
+
+button:disabled {
+	opacity: 0.6;
+	cursor: default;
+}
+
+.message {
+	margin: 14px 0;
+	color: #b42318;
+}
+
+.skeleton {
+	padding: 16px;
+	border-radius: 10px;
+	background: #f2f6ff;
+	color: #4f637f;
+}

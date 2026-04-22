@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>codex-mng login</title>
+	<style>
+		:root {
+			--bg: #f4f7fb;
+			--ink: #0f172a;
+			--muted: #4b5563;
+			--line: #d9e2f2;
+			--panel: #ffffff;
+			--accent: #2563eb;
+			--accent-2: #1d4ed8;
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		body {
+			margin: 0;
+			min-height: 100vh;
+			font-family: "Trebuchet MS", Verdana, sans-serif;
+			color: var(--ink);
+			background:
+				radial-gradient(circle at 10% 10%, rgba(37, 99, 235, 0.13), transparent 38rem),
+				linear-gradient(135deg, #f9fbff 0%, var(--bg) 100%);
+			display: grid;
+			place-items: center;
+			padding: 24px;
+		}
+
+		.wrap {
+			width: min(480px, 100%);
+			background: var(--panel);
+			border: 1px solid var(--line);
+			border-radius: 8px;
+			padding: 34px 30px;
+			box-shadow: 0 22px 60px rgba(13, 38, 76, 0.12);
+		}
+
+		h1 {
+			margin: 0 0 10px;
+			font-size: 2rem;
+			letter-spacing: 0;
+		}
+
+		p {
+			margin: 0 0 24px;
+			color: var(--muted);
+			line-height: 1.5;
+		}
+
+		.login-btn {
+			display: inline-flex;
+			align-items: center;
+			gap: 10px;
+			padding: 12px 16px;
+			border: 0;
+			border-radius: 8px;
+			background: var(--accent);
+			color: #fff;
+			font-size: 0.95rem;
+			font-weight: 700;
+			text-decoration: none;
+			transition: background 0.15s ease;
+		}
+
+		.login-btn:hover {
+			background: var(--accent-2);
+		}
+
+		.google-mark {
+			display: inline-grid;
+			place-items: center;
+			width: 20px;
+			height: 20px;
+			border-radius: 50%;
+			background: #fff;
+			color: #2563eb;
+			font-size: 0.72rem;
+			font-weight: 800;
+		}
+
+		.flash {
+			display: none;
+			margin-top: 18px;
+			border-radius: 8px;
+			padding: 10px 12px;
+			background: #fef2f2;
+			color: #991b1b;
+			font-size: 0.9rem;
+		}
+
+		.flash.active {
+			display: block;
+		}
+	</style>
+</head>
+<body>
+	<main class="wrap">
+		<h1>Sign in to codex-mng</h1>
+		<p>Authenticate with Google to access the dashboard and usage APIs.</p>
+		<a class="login-btn" href="/oauth2/authorization/google">
+			<span class="google-mark">G</span>
+			Sign in with Google
+		</a>
+		<div class="flash" id="errorText">Login failed. Please try again.</div>
+		<div class="flash" id="logoutText">You have been logged out.</div>
+	</main>
+	<script>
+		async function redirectIfAlreadyLoggedIn() {
+			try {
+				const response = await fetch("/api/me");
+				if (response.ok) {
+					window.location.replace("/dashboard.html");
+				}
+			} catch (e) {
+				// no-op
+			}
+		}
+
+		const params = new URLSearchParams(window.location.search);
+		if (params.get("error") === "true") {
+			document.getElementById("errorText").classList.add("active");
+		}
+		if (params.get("logout") === "true") {
+			const node = document.getElementById("logoutText");
+			node.classList.add("active");
+			node.style.background = "#eefaf1";
+			node.style.color = "#166534";
+		}
+		redirectIfAlreadyLoggedIn();
+	</script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: codex-mng
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - openid
+              - profile
+              - email
+
+app:
+  frontend:
+    base-url: ${FRONTEND_BASE_URL:http://localhost:3000}
+    login-path: /login
+    dashboard-path: /dashboard
+
+codex:
+  usage:
+    provider: official
+    base-url: https://api.openai.com
+    admin-key: ${OPENAI_ADMIN_KEY:}
+    api-key: ${OPENAI_API_KEY:}
+    timeout: 5s
+    retry-count: 1
+    usage-window-days: 7
+    cache-ttl: 60s
+    allowed-origins:
+      - http://localhost:8080
+      - http://localhost:3000
+    internal-token: ""
+    user-scope-mode: ORGANIZATION_SHARED
+    user-project-mapping: {}
+    manual:
+      plan-name: UNKNOWN
+      unit: UNKNOWN
+      message: Manual provider is active. Connect an official usage API to load real values.
